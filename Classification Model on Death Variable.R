@@ -35,6 +35,7 @@ write_csv(vaccines4, "~/VAERS-Project-ST-495/CreatedData/2016-21VAERSDataUpdated
 # If starting with updated data, start with the following code below:
 # vaccines4 <- read_csv("~/VAERS-Project-ST-495/CreatedData/2016-21VAERSDataUpdated.csv")
 # vaccines4$DIED <- factor(vaccines4$DIED)
+# vaccines4$OCCUR_YEAR <- factor(vaccines4$OCCUR_YEAR)
 
 set.seed(9)
 n <- nrow(vaccines4)
@@ -218,17 +219,17 @@ ggplot(testingErrorModel, aes(x = Models, y = `Testing Error Rates`)) +
 
 # Do training data
 logreg.pred.train <- predict(logReg2, trainingData, "response")
-trainingData$PROBABILITY <- logreg.pred.train
+trainingData$DEAD_PROBABILITY <- logreg.pred.train
 
 # Do testing data
 logreg.pred.test <- predict(logReg2, testingData, "response")
-testingData$PROBABILITY <- logreg.pred.test
+testingData$DEAD_PROBABILITY <- logreg.pred.test
 
 # Combine into one set
 allPatients <- rbind(trainingData, testingData)
 
 # Show Error Rates
-died.pred <- ifelse(allPatients$PROBABILITY >= .5, "Y", "N")
+died.pred <- ifelse(allPatients$DEAD_PROBABILITY >= .5, "Y", "N")
 totalError <- sum(allPatients$DIED != factor(died.pred)) / nrow(allPatients)
 totalError
 
@@ -238,7 +239,7 @@ confusionMatrixTotalError <- confusionMatrix(factor(died.pred), allPatients$DIED
 confusionMatrixTotalError
 
 # See if there is a relationship between age and probability of death
-ggplot(allPatients, aes(x = AGE_YRS, y = PROBABILITY)) +
+ggplot(allPatients, aes(x = AGE_YRS, y = DEAD_PROBABILITY)) +
   geom_point(alpha = 0.05, color = "red") +
   labs(title = "Relationship Between Age \nand Probability of Death",
        x = "Age (in years)",
@@ -263,3 +264,6 @@ allPatientsSelected <- allPatients %>%
 
 # Write updated csv file
 write_csv(allPatientsSelected, "~/VAERS-Project-ST-495/CreatedData/VAERS2016-21DeathPredictions.csv")
+
+# Save logistic regression model for app
+write_rds(logReg2, "logRegModel4DeathVAERS.rds")
