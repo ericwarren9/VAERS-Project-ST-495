@@ -7,7 +7,7 @@ library(tidyverse)
 
 vaccines <- read_csv("~/VAERS-Project-ST-495/CreatedData/2016-21VAERSDataUpdated.csv")
 vaccines$HOSPITAL <- factor(vaccines$HOSPITAL)
-vaccines4$OCCUR_YEAR <- factor(vaccines4$OCCUR_YEAR)
+vaccines$OCCUR_YEAR <- factor(vaccines$OCCUR_YEAR)
 
 # Split into train and test data ------------------------------------------
 
@@ -212,7 +212,7 @@ library(caret)
 confusionMatrixTotalError <- confusionMatrix(factor(hospital.pred), allPatients$HOSPITAL)
 confusionMatrixTotalError
 
-# See if there is a relationship between age and probability of death
+# See if there is a relationship between age and probability of hospitalization
 ggplot(allPatients, aes(x = AGE_YRS, y = HOSPITAL_PROBABILITY)) +
   geom_point(alpha = 0.05, color = "red") +
   labs(title = "Relationship Between Age \nand Probability of Going to Hospital",
