@@ -189,6 +189,17 @@ ggplot(testingErrorModel, aes(x = Models, y = `Testing Error Rates`)) +
                                   hjust = 0.5))
 
 
+# Look at variable importance for selected model --------------------------
+
+library(caret)
+vip <- varImp(logReg2)
+variable <- rownames(vip)
+rownames(vip) <- NULL
+vip_df <- cbind(variable, vip)
+vip_df <- vip_df[order(-vip_df$Overall), ]
+vip_df[1:7, ] #Show top 7 most important variables
+
+
 # Making predictions and assign to observations ---------------------------
 
 # Do training data
